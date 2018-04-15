@@ -1,0 +1,120 @@
+<h1 id="github建立blog">Github建立blog</h1>
+
+<h2 id="前言">前言</h2>
+<p>最近各种投简历找工作，发现GitHub是HR很看重的一个点，明知现在搞个blog已经太晚，但总比没有好（滑稽）。
+先说一下，我也是边做边学边写blog,如有哪里写错还请指出。
+废话不多说，开始自己的首个blog生涯。</p>
+
+<hr />
+
+<p>首先</p>
+
+<p>注册GitHub账号（废话），电脑端（本人使用远端ubuntu16.04）
+电脑端安装 git （全新ubuntu 谅解一下）</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;sudo apt-get install git
+</code></pre>
+</div>
+
+<p>接下来配置username和email</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;git config --global user.name "输入你的github账号"
+
+&gt;git config --global user.email "输入你github所使用的邮箱"
+</code></pre>
+</div>
+
+<h2 id="设置ssh连接github">设置ssh连接github（？</h2>
+
+<p>首先输入下方指令生成秘钥</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;ssh-keygen -t rsa -C "输入你github所使用的邮箱" 
+</code></pre>
+</div>
+<p>系统会先询问秘钥存放地址（默认直接按Enter）</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Enter a file in which to save the key (~/user/.ssh/id_rsa):[Press enter]
+</code></pre>
+</div>
+<p>接下来系统会问让你输入一串密码（passphrase）并验证一次 之后登录时需使用</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Enter new passphrase (empty for no passphrase): [Type new passphrase]
+Enter same passphrase again: [One more time for luck]
+Your identification has been saved with the new passphrase.
+</code></pre>
+</div>
+<p>然后在你存放秘钥的地址找到id_rsa.pub 用你能想到的方法将其中内容复制到<a href="https://github.com/settings/keys">github add ssh</a> (因为档案在远端 一时想不到什么方法 蠢蠢的用filezilla 将id_rsa.pub搞到本地打开)</p>
+
+<p>然后在<a href="https://github.com/settings/keys">github ssh</a>可以看到<img src="https://lh4.googleusercontent.com/AhYtN-X-zP5YSacnm-Ss5zEcBgEUkNQHbs0fIG-QO7PVX3ubf_gW1gvqYLChzC5QJIDcC0asEIW9DA=w2560-h987-rw" alt="图" /></p>
+
+<p>还未连接会显示灰色并显示Never used</p>
+
+<p>下一步来测试ssh</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;ssh -T git@github.com
+</code></pre>
+</div>
+<p>然后输入刚刚设置的密码（passphrase）</p>
+
+<p><img src="https://lh4.googleusercontent.com/QKiqBxyoTLCvkZ2Y2QBHe9vtB6-MaoeyWUTehyBzNji07Qjx4cWYH0PtCiJbv9a6OIhhzIN9Xr5ZsA=w958-h969" alt="" /></p>
+
+<p>看到上面指令表示连接测试成功</p>
+
+<p>参考
+http://magicse7en.github.io/2016/03/06/ubuntu-github-hexo-blog-setup/
+https://help.github.com/articles/testing-your-ssh-connection/
+http://hungchicheng.me/2017/05/11/how-to-make-blog-on-github/</p>
+
+<hr />
+
+<p>建立专案（repository）</p>
+
+<p>专案名必须是</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>github账号.github.io
+</code></pre>
+</div>
+
+<p><img src="https://lh4.googleusercontent.com/aQly7q-uWNQNClaQcyXu46Fk4_YrR-93ac7gxlaEL2KM6HxLpVRYTjsdXmpfL4cg-JgsAxEp8zGuW6Vyg58R=w1987-h775-rw" alt="" /></p>
+
+<p>接下来一段git操作 emmmmmm</p>
+
+<p>在专案中建立一个index.html 做测试 内容随意</p>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;html&gt;</span>This is my personal blog<span class="nt">&lt;/html&gt;</span>
+</code></pre>
+</div>
+<p>像上面这样就好</p>
+
+<p>然后push到github</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;git add .
+&gt;git commit -m "add index.html"
+&gt;git push origin master
+</code></pre>
+</div>
+<p>git小白 有问题还请纠正</p>
+
+<p>确认index.html有进入专案 可以用浏览器打开 github账号名.github.io 来确认是否传输成功
+应该会看到网页如下</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>This is my personal blog
+</code></pre>
+</div>
+
+<hr />
+
+<p>使用Jekyll (<a href="http://hungchicheng.me/2017/05/11/how-to-make-blog-on-github/">为什么使用Jekyll</a>)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;sudo apt install jekyll
+&gt;jekyll new myblog
+&gt;mv myblog/* 你专案的目录
+</code></pre>
+</div>
+
+<p>然后push到github 就能看到一个初始化的jekyll 网站</p>
+
+<p>如果想要在本地架设个web serve 可以直接输入</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;cd 专案目录
+&gt;jekyll serve
+</code></pre>
+</div>
+
+<p>然后就能在 http://localhost:4000 看到网站</p>
+
+<p>如需外网访问</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;jekyll serve -w -host=0.0.0.0
+</code></pre>
+</div>
+<p>就能通过 ip:4000 来访问</p>
+
