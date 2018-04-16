@@ -3,10 +3,10 @@ description: My Personal Blog
 author: QiuZiXiang
 logo: /hcz-jekyll-blog/static/img/avatar.png
 github: https://github.com/qiuzixaing
-about: Freelance developer
+about: NCTU student
 
-baseurl: "https://qiuzixiang.github.io/hcz-jekyll-blog"
-url: "https://qiuzixiang.github.io/hcz-jekyll-blog"
+baseurl: "https://qiuzixiang.github.io/"
+url: "https://qiuzixiang.github.io/"
 
 allowsearch: true
 
