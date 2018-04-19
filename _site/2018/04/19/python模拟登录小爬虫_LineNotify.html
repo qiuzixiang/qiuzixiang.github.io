@@ -1,0 +1,111 @@
+<h1 id="python-模拟登录小爬虫---line-notify">python 模拟登录小爬虫 +  line Notify</h1>
+
+<h2 id="模拟登录">模拟登录</h2>
+
+<p>使用工具：</p>
+<ul>
+  <li>chromedriver</li>
+  <li>selenium</li>
+</ul>
+
+<p>到<a href="https://chromedriver.storage.googleapis.com/index.html">下载地址</a>下载最新chromedriver（使用旧版可能报错） 并解压</p>
+
+<p>测试连接</p>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="n">chromePath</span> <span class="o">=</span> <span class="s">r'解压后chromedriver路径'</span>
+<span class="n">wd</span><span class="o">=</span><span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">executable_path</span><span class="o">=</span> <span class="n">chromePath</span><span class="p">)</span>  <span class="c">#Chrome C大写</span>
+
+<span class="n">loginUrl</span> <span class="o">=</span><span class="s">'测试登录的网站'</span>
+<span class="n">wd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">loginUrl</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>填写账号密码</p>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code>
+<span class="n">wd</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="s">'//*[@id="userid"]'</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s">'你要填写的账号名'</span><span class="p">)</span> 
+<span class="c"># '//*[@id="userid"]' 为xpath  抓取方法到chrome打开开发者模式 找到所要填写的栏位 右键 copy -&gt;xpath</span>
+
+<span class="n">wd</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="s">'//*[@id="passwd"]'</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s">'输入密码'</span><span class="p">)</span>
+
+<span class="c">#如果是按键提交</span>
+<span class="n">wd</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="s">'//*[@id="login_btn"]'</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+
+<span class="c">#如果是表单提交</span>
+<span class="n">wd</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="s">'//*[@id="login_btn"]'</span><span class="p">)</span><span class="o">.</span><span class="n">submit</span><span class="p">()</span>
+
+</code></pre>
+</div>
+
+<p>登录完成 这样所有的cookies都存在’wd’里面 随时可以调用</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c">#额外补充 密码输入</span>
+<span class="kn">import</span> <span class="nn">getpass</span>
+<span class="nb">input</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s">"Please input your password:"</span><span class="p">)</span>
+
+<span class="c">#input即密码 可直接调用</span>
+<span class="c">#如：wd.find_element_by_xpath('//*[@id="passwd"]').send_keys(input)</span>
+<span class="c">#调用完清除？？</span>
+</code></pre>
+</div>
+
+<h2 id="将selenium的cookies传入requests">将selenium的cookies传入requests</h2>
+
+<p>构建Session()</p>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">reqeusts</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+
+<span class="c">#从'wd'里调出cookies</span>
+<span class="n">cookies</span> <span class="o">=</span> <span class="n">wd</span><span class="o">.</span><span class="n">get_cookies</span><span class="p">()</span>
+
+<span class="c">#将selenium形式的cookies转换为requests可用的cookies。</span>
+<span class="k">for</span> <span class="n">cookie</span> <span class="ow">in</span> <span class="n">cookies</span><span class="p">:</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span><span class="n">cookie</span><span class="p">[</span><span class="s">'name'</span><span class="p">],</span><span class="n">cookie</span><span class="p">[</span><span class="s">'value'</span><span class="p">])</span>
+        
+<span class="c">#Done 来测试要抓取的网站</span>
+<span class="n">req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'待测试的链接'</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="小小补充抓取后的网页格式">小小补充抓取后的网页格式</h3>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">html1</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'网站'</span><span class="p">)</span><span class="o">.</span><span class="n">content</span> <span class="c">#byte格式 需要decode</span>
+<span class="n">html2</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'网站'</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span> <span class="c">#str 格式 </span>
+
+<span class="c">#如str是json 可使用json直接paser</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="n">html_paser</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">html2</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="line-notify">line Notify</h2>
+
+<p>要想使用首先登录 https://notify-bot.line.me/my/ 登录账号</p>
+
+<p>（中间好像有个申请开发者之类的动作）</p>
+
+<p>然后到 Generate access token (For developers) -&gt;Generate token -&gt;选择发送到的群组（好像只能群组）</p>
+
+<p>完成后生成一个token （复制下来）</p>
+
+<p>然后python端</p>
+
+<p>安装linetool库</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;sudo pip install linetool
+</code></pre>
+</div>
+
+<p>代码部分很简单</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">lineTool</span>
+
+<span class="n">token</span> <span class="o">=</span> <span class="s">"刚刚的token"</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="s">"Hello world"</span> <span class="c">#所要发的消息</span>
+ 
+<span class="n">lineTool</span><span class="o">.</span><span class="n">lineNotify</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Done</p>
+
+<p>简不简单XDDD</p>
+
